@@ -71,7 +71,7 @@ select job, sal from emp;
 
 
 SELECT '오늘' || '너무덥다' FROM dual;
- 
+
 select '부서번호:' || deptno AS "부서번호" from dept;
 
 select '부서번호:' || (deptno+100) AS "부서번호" from dept;
