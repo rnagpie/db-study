@@ -1,0 +1,71 @@
+
+
+CREATE TABLE TABLE_DATA_1
+(
+    no NUMBER(10),
+    create_date DATE
+);
+
+
+CREATE TABLE TABLE_DATA_2
+(
+    no NUMBER(10),
+    create_date DATE
+);
+
+
+CREATE TABLE TABLE_COLC
+(
+    std_date DATE,
+    CHECK_DATA1 VARCHAR2(6),
+    CHECK_DATA2 VARCHAR2(6)
+);
+
+INSERT INTO TABLE_DATA_1 VALUES (1, TO_DATE('2023-04-01', 'YYYY-MM-DD'));
+INSERT INTO TABLE_DATA_1 VALUES (2, TO_DATE('2023-04-02', 'YYYY-MM-DD'));
+INSERT INTO TABLE_DATA_1 VALUES (3, TO_DATE('2023-04-03', 'YYYY-MM-DD'));
+INSERT INTO TABLE_DATA_1 VALUES (4, TO_DATE('2023-04-04', 'YYYY-MM-DD'));
+
+
+INSERT INTO TABLE_DATA_2 VALUES (1, TO_DATE('2023-04-02', 'YYYY-MM-DD'));
+INSERT INTO TABLE_DATA_2 VALUES (2, TO_DATE('2023-04-03', 'YYYY-MM-DD'));
+INSERT INTO TABLE_DATA_2 VALUES (3, TO_DATE('2023-04-04', 'YYYY-MM-DD'));
+INSERT INTO TABLE_DATA_2 VALUES (4, TO_DATE('2023-04-05', 'YYYY-MM-DD'));
+
+
+--A업체데이터 처리 기준
+MERGE INTO TABLE_COLC T
+USING (SELECT DISTINCT create_date FROM TABLE_DATA_1) S
+ON (T.std_date = S.create_date)
+WHEN MATCHED THEN --날짜가 있는 경우
+    UPDATE SET T.CHECK_DATA1 = 'Y'
+WHEN NOT MATCHED THEN --날짜가 없는 경우
+    INSERT (std_date, CHECK_DATA1, CHECK_DATA2)
+    VALUES (S.create_date, 'Y', 'N'); 
+
+--B업체데이터 처리 기준
+MERGE INTO TABLE_COLC T
+USING (SELECT DISTINCT create_date FROM TABLE_DATA_2) S
+ON (T.std_date = S.create_date)
+WHEN MATCHED THEN --날짜가 있는 경우
+    UPDATE SET T.CHECK_DATA2 = 'Y'
+WHEN NOT MATCHED THEN --날짜가 없는 경우
+    INSERT (std_date, CHECK_DATA1, CHECK_DATA2)
+    VALUES (S.create_date, 'N', 'Y'); 
+
+
+SELECT
+    TO_CHAR(std_date, 'YYYY-MM-DD') AS std_date,
+    CHECK_DATA1,
+    CHECK_DATA2
+FROM
+    TABLE_COLC
+ORDER BY
+    std_date;
+
+select * from TABLE_COLC
+where check_datal = 'N'; -- 'Y' / 'N' 'T' / 'F' 1 / 0
+
+select * from TABLE_DATA_1;
+select * from TABLE_DATA_2;
+select * from TABLE_C
